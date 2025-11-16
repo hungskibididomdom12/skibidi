@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Creative Quiz — Trang chủ</title>
+<link rel="stylesheet" href="csss.css" />
+
+<body>
+
+<button id="loginBtn" class="login-btn">Đăng nhập</button>
+<button id="logoutBtn" class="logout-btn" style="display:none;">Đăng xuất</button>
+
+<div class="sidebar">
+  <div class="profile card">
+    <img src="https://i.pinimg.com/736x/6d/b7/0e/6db70ea8cc222598a89d17de720e7433.jpg" alt="Avatar" class="avatar">
+    <h3 id="playerName">Tên người chơi</h3>
+    <p class="level">Cấp độ: <span>12</span></p>
+  </div>
+
+  <div class="card">
+    <h4>🏆 Thành tựu</h4>
+    <div class="achievement">100 câu đúng 🎯</div>
+    <div class="achievement">Hoàn thành 5 quiz liên tiếp 🔥</div>
+    <div class="achievement">Thành viên 1 tháng 🎉</div>
+  </div>
+
+  <div class="card">
+    <h4>📊 Thống kê</h4>
+    <div class="stat"><b>Tổng điểm:</b> 2560</div>
+    <div class="stat"><b>Thời gian chơi:</b> 12h</div>
+  </div>
+</div>
+
+<div class="container">
+  <h1>Creative Quiz</h1>
+  <p class="lead">Ôn tập Khoa học Tự nhiên — chọn chủ đề bạn muốn học ngay</p>
+
+  <div class="search-row">
+    <div class="search-box" id="searchBox" role="search" aria-label="Tìm quiz">
+      <div class="search-icon">🔎</div>
+      <input id="searchInput" class="search-input" type="text" placeholder="Bấm vào đây để chọn chủ đề (Vật Lý, Hóa Học,...)" autocomplete="off" />
+      <button id="goBtn" class="btn" title="Bắt đầu">Bắt đầu</button>
+    </div>
+
+    <div id="defaultBoards" class="default-boards">
+      <div class="board"><h3>📖 Hướng dẫn sử dụng</h3><p>Bấm vào ô tìm kiếm để chọn môn học.</p></div>
+      <div class="board"><h3>🤔 Không biết chọn gì?</h3><p>Chọn ngẫu nhiên để thử trải nghiệm.</p></div>
+      <div class="board"><h3>🎮 Chọn chơi thử</h3><p>Bấm "Bắt đầu" mà không gõ gì, hệ thống sẽ gợi ý ngẫu nhiên.</p></div>
+    </div>
+
+    <div id="results" class="results" aria-hidden="true" style="display:none;">
+      <div class="card" data-key="vatly"><div class="title">🔭 Vật Lý</div><div class="desc">Cơ học, điện — cơ bản đến nâng cao cho lớp 9</div></div>
+      <div class="card" data-key="hoahoc"><div class="title">⚗️ Hóa Học</div><div class="desc">Nguyên tử — phản ứng, phương trình & bài tập thực hành</div></div>
+      <div class="card" data-key="sinhhoc"><div class="title">🧬 Sinh Học</div><div class="desc">Sinh vật & cơ chế — dễ hiểu</div></div>
+      <div class="card" data-key="datkhi"><div class="title">🌍 Khoa học Trái Đất</div><div class="desc">Địa chất, khí tượng, môi trường</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const playerName = document.getElementById('playerName');
+
+// kiểm tra xem user đã đăng nhập chưa
+const currentUser = localStorage.getItem('currentUser');
+if(currentUser){
+  playerName.textContent = currentUser;
+  loginBtn.style.display = 'none';
+  logoutBtn.style.display = 'block';
+}
+
+// đăng nhập
+loginBtn.addEventListener('click', ()=>{
+  window.location.href = 'login.html';
+});
+
+// đăng xuất
+logoutBtn.addEventListener('click', ()=>{
+  localStorage.removeItem('currentUser');
+  alert("Bạn đã đăng xuất!");
+  location.reload();
+});
+
+// --- phần quiz giống code cũ ---
+const searchInput   = document.getElementById('searchInput');
+const results       = document.getElementById('results');
+const cards         = results.querySelectorAll('.card');
+const goBtn         = document.getElementById('goBtn');
+const defaultBoards = document.getElementById('defaultBoards');
+
+function norm(s) {
+  if (!s) return '';
+  return s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w\s]/g,'').trim();
+}
+
+function showResults(){ defaultBoards.style.display='none'; results.style.display='block'; results.setAttribute('aria-hidden','false'); }
+function showDefault(){ results.style.display='none'; defaultBoards.style.display='flex'; results.setAttribute('aria-hidden','true'); }
+
+searchInput.addEventListener('input', ()=>{
+  cards.forEach(c=>c.style.display='block');
+  const k = norm(searchInput.value).replace(/\s+/g,'');
+  cards.forEach(card=>{
+    const keyNorm = norm(card.getAttribute('data-key')).replace(/\s+/g,'');
+    const titleNorm = norm(card.querySelector('.title').textContent).replace(/\s+/g,'');
+    card.style.display = (keyNorm===k || titleNorm===k)?'block':'none';
+  });
+  if(searchInput.value.trim()===''){ showResults(); } else { showResults(); }
+});
+
+cards.forEach(card=>{
+  card.addEventListener('click', ()=>{
+    const title = card.querySelector('.title').textContent;
+    const key = card.getAttribute('data-key');
+    searchInput.value = title;
+    showDefault();
+  });
+});
+
+goBtn.addEventListener('click', ()=>{
+  let subjectKey = null;
+  const inorm = norm(searchInput.value).replace(/\s+/g,'');
+  cards.forEach(card=>{
+    const keyNorm = norm(card.getAttribute('data-key')).replace(/\s+/g,'');
+    const titleNorm = norm(card.querySelector('.title').textContent).replace(/\s+/g,'');
+    if(keyNorm===inorm || titleNorm===inorm){ subjectKey=card.getAttribute('data-key'); }
+  });
+  if(subjectKey){ window.location.href='choice.html?subject='+subjectKey; }
+  else{ showResults(); alert('Không tìm thấy chủ đề phù hợp.'); }
+});
+</script>
+
+</body>
+</html>

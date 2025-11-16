@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bài kiểm tra Điện học — 20 phút</title>
+  <style>
+    :root{--bg:#06121a;--card:#071827;--accent:#f59e0b;--muted:#94a3b8;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background:linear-gradient(180deg,#04121a 0%, #082430 100%); color:#eef6fb; padding:24px}
+    .wrap{max-width:900px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    h1{font-size:20px;margin:0}
+    .meta{color:var(--muted);font-size:13px}
+    .card{background:var(--card);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .controls{display:flex;gap:8px;align-items:center}
+    button{background:var(--accent);border:none;color:#081019;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+    button.secondary{background:transparent;color:var(--accent);border:1px solid rgba(245,158,11,0.12)}
+    .timer{font-weight:700;font-size:18px}
+    form .question{margin-bottom:14px;padding:12px;border-radius:8px;background:var(--glass);border:1px solid rgba(255,255,255,0.03)}
+    .q-title{font-weight:700;margin-bottom:8px}
+    .options label{display:block;padding:8px;border-radius:6px;cursor:pointer}
+    input[type="radio"]{margin-right:8px}
+    textarea,input[type='text'],input[type='number']{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+    .actions{display:flex;gap:8px;justify-content:flex-end}
+    .result{font-size:16px;font-weight:700}
+    .footnote{color:var(--muted);font-size:13px;margin-top:8px}
+    @media (max-width:600px){.controls{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Bài kiểm tra: Điện học (20 phút)</h1>
+        <div class="meta">8 câu trắc nghiệm + 5 câu tự luận / Thời gian: <span class="timer" id="display-timer">20:00</span></div>
+      </div>
+      <div class="controls">
+        <button id="start-btn">Bắt đầu</button>
+        <button id="submit-btn" class="secondary" disabled>Nộp bài</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div style="margin-bottom:8px">Hướng dẫn: Nhấn "Bắt đầu" để bắt đầu đồng hồ 20 phút. Sau khi hết giờ hệ thống sẽ tự nộp và chấm trắc nghiệm. Các câu tự luận có gợi ý đáp án để giáo viên/học sinh đối chiếu.</div>
+      <form id="quiz-form">
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">1. Đơn vị cường độ dòng điện là gì?</div>
+          <div class="options">
+            <label><input type="radio" name="q1" value="A">A. Vôn (V)</label>
+            <label><input type="radio" name="q1" value="B">B. Ampe (A)</label>
+            <label><input type="radio" name="q1" value="C">C. Ôm (Ω)</label>
+            <label><input type="radio" name="q1" value="D">D. Watt (W)</label>
+          </div>
+        </div>
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">2. Luật Ohm phát biểu mối quan hệ nào?</div>
+          <div class="options">
+            <label><input type="radio" name="q2" value="A">A. I = V/R</label>
+            <label><input type="radio" name="q2" value="B">B. V = I + R</label>
+            <label><input type="radio" name="q2" value="C">C. P = IV</label>
+            <label><input type="radio" name="q2" value="D">D. Q = It</label>
+          </div>
+        </div>
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">3. Trong mạch nối tiếp, điện trở tương đương tính bằng công thức nào?</div>
+          <div class="options">
+            <label><input type="radio" name="q3" value="A">A. R_eq = R1 + R2 + ...</label>
+            <label><input type="radio" name="q3" value="B">B. 1/R_eq = 1/R1 + 1/R2 + ...</label>
+            <label><input type="radio" name="q3" value="C">C. R_eq = R1 * R2</label>
+            <label><input type="radio" name="q3" value="D">D. R_eq = max(R1,R2,...)</label>
+          </div>
+        </div>
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">4. Công suất điện tiêu thụ của một dụng cụ được tính theo công thức nào?</div>
+          <div class="options">
+            <label><input type="radio" name="q4" value="A">A. P = V/I</label>
+            <label><input type="radio" name="q4" value="B">B. P = I^2 R</label>
+            <label><input type="radio" name="q4" value="C">C. P = Q/t</label>
+            <label><input type="radio" name="q4" value="D">D. P = V - I</label>
+          </div>
+        </div>
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">5. Một biến trở điều chỉnh cường độ dòng điện bằng cách nào?</div>
+          <div class="options">
+            <label><input type="radio" name="q5" value="A">A. Thay đổi điện trở trong mạch</label>
+            <label><input type="radio" name="q5" value="B">B. Thay đổi nguồn điện</label>
+            <label><input type="radio" name="q5" value="C">C. Thay đổi năng lượng mạch</label>
+            <label><input type="radio" name="q5" value="D">D. Thay đổi điện tích</label>
+          </div>
+        </div>
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">6. Nếu một bóng đèn có ghi 60 W, 120 V thì cường độ dòng điện khi hoạt động là bao nhiêu?</div>
+          <div class="options">
+            <label><input type="radio" name="q6" value="A">A. 0.5 A</label>
+            <label><input type="radio" name="q6" value="B">B. 2 A</label>
+            <label><input type="radio" name="q6" value="C">C. 7200 A</label>
+            <label><input type="radio" name="q6" value="D">D. 60 A</label>
+          </div>
+        </div>
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">7. Điện tích được đo bằng đơn vị nào?</div>
+          <div class="options">
+            <label><input type="radio" name="q7" value="A">A. Coulomb (C)</label>
+            <label><input type="radio" name="q7" value="B">B. Newton (N)</label>
+            <label><input type="radio" name="q7" value="C">C. Joule (J)</label>
+            <label><input type="radio" name="q7" value="D">D. Tesla (T)</label>
+          </div>
+        </div>
+
+        <div class="question" data-qtype="mc">
+          <div class="q-title">8. Mạch song song có đặc điểm nào?</div>
+          <div class="options">
+            <label><input type="radio" name="q8" value="A">A. Dòng điện qua mỗi nhánh bằng nhau</label>
+            <label><input type="radio" name="q8" value="B">B. Hiệu điện thế trên mỗi nhánh bằng nhau</label>
+            <label><input type="radio" name="q8" value="C">C. Điện trở tương đương bằng tổng các điện trở</label>
+            <label><input type="radio" name="q8" value="D">D. Mạch không dẫn điện</label>
+          </div>
+        </div>
+
+        <hr style="border:none;height:1px;background:rgba(255,255,255,0.03);margin:12px 0" />
+
+        <div class="question" data-qtype="sa">
+          <div class="q-title">9. (Tính) Một điện trở R1 = 10 Ω nối tiếp với R2 = 20 Ω. Điện trở tương đương là bao nhiêu?</div>
+          <input type="text" name="q9" placeholder="Nhập đáp án (Ω)" />
+        </div>
+
+        <div class="question" data-qtype="sa">
+          <div class="q-title">10. (Ngắn) Viết định nghĩa ngắn về hiệu điện thế (1 câu).</div>
+          <input type="text" name="q10" placeholder="Viết 1 câu" />
+        </div>
+
+        <div class="question" data-qtype="sa">
+          <div class="q-title">11. (Tính) Một mạch lấy nguồn 12 V, nối một bóng đèn R = 6 Ω. Tính cường độ dòng điện trong mạch (A).</div>
+          <input type="text" name="q11" placeholder="Nhập đáp án" />
+        </div>
+
+        <div class="question" data-qtype="sa">
+          <div class="q-title">12. (Ngắn) Nêu công thức liên hệ giữa công suất, điện áp và cường độ dòng điện.</div>
+          <input type="text" name="q12" placeholder="Ví dụ: P = ..." />
+        </div>
+
+        <div class="question" data-qtype="sa">
+          <div class="q-title">13. (Tính) Trong mạch song song gồm hai điện trở R1 = 30 Ω và R2 = 60 Ω, điện trở tương đương là bao nhiêu (Ω)?</div>
+          <input type="text" name="q13" placeholder="Nhập đáp án" />
+        </div>
+
+      </form>
+
+      <div class="actions" style="margin-top:12px">
+        <button id="auto-check" class="secondary" disabled>Kiểm tra nhanh trắc nghiệm</button>
+      </div>
+      <div class="footnote">Ghi chú: Trắc nghiệm chấm tự động. Các bài tính so sánh với sai số ±0.5 nếu là số thập phân. Tự luận có gợi ý đáp án để đối chiếu.</div>
+    </section>
+
+    <section class="card" id="result-card" style="display:none">
+      <div id="result-summary"></div>
+      <div id="answers"></div>
+    </section>
+
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('start-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const autoCheckBtn = document.getElementById('auto-check');
+    const timerDisplay = document.getElementById('display-timer');
+    const form = document.getElementById('quiz-form');
+    const resultCard = document.getElementById('result-card');
+    const resultSummary = document.getElementById('result-summary');
+    const answersDiv = document.getElementById('answers');
+
+    const MC_ANSWERS = {q1:'B', q2:'A', q3:'A', q4:'B', q5:'A', q6:'B', q7:'A', q8:'B'};
+    const SA_ANSWERS = {
+      q9: function(){ return 10 + 20; },
+      q10: 'Hiệu điện thế là công thực hiện để di chuyển một đơn vị điện tích giữa hai điểm; đo bằng vôn.',
+      q11: function(){ const V=12, R=6; return +(V/R).toFixed(2); },
+      q12: 'P = VI (và P = I^2 R = V^2 / R).',
+      q13: function(){ const r1=30, r2=60; return +(1/(1/r1 + 1/r2)).toFixed(2); }
+    };
+
+    let timerInterval = null;
+    let timeLeft = 20*60; // seconds
+    let started = false;
+
+    function formatTime(s){ const m = Math.floor(s/60); const ss = s%60; return `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}` }
+    timerDisplay.textContent = formatTime(timeLeft);
+
+    startBtn.addEventListener('click', ()=>{
+      if(started) return;
+      started = true; startBtn.disabled = true; submitBtn.disabled = false; autoCheckBtn.disabled = false;
+      timerInterval = setInterval(()=>{ timeLeft -= 1; timerDisplay.textContent = formatTime(timeLeft); if(timeLeft<=0){ clearInterval(timerInterval); doSubmit(true); } },1000);
+    });
+
+    submitBtn.addEventListener('click', ()=> doSubmit(false));
+    autoCheckBtn.addEventListener('click', ()=> gradeMCOnly());
+
+    function gradeMCOnly(){ const formData = new FormData(form); let correct=0; let total=0; for(let i=1;i<=8;i++){ const key='q'+i; total++; if(formData.get(key)===MC_ANSWERS[key]) correct++; } alert(`Trắc nghiệm: ${correct}/${total} đúng`); }
+
+    function doSubmit(timeout){ if(timerInterval) clearInterval(timerInterval); submitBtn.disabled=true; autoCheckBtn.disabled=true; const formData = new FormData(form);
+      let mcCorrect=0; for(let i=1;i<=8;i++){ const key='q'+i; if(formData.get(key)===MC_ANSWERS[key]) mcCorrect++; }
+      const saResults = [];
+      for(let k=9;k<=13;k++){ const key='q'+k; const user=(formData.get(key)||'').trim(); let expected=SA_ANSWERS[key]; if(typeof expected==='function') expected = expected(); let ok=false; let note=''; if(!isNaN(expected)) { const num = parseFloat(user.replace(',','.')); if(!isNaN(num)){ ok = Math.abs(num - expected) <= 0.5; note = `Đáp chuẩn: ${expected}`; } else { ok=false; note = `Đáp chuẩn (số): ${expected}`; } } else { const exp=String(expected).toLowerCase(); const u=user.toLowerCase(); ok = u.length>0 && (u.includes('công') || u.includes('điện thế') || u.includes('vôn')) ; note = `Gợi ý đáp án: ${expected}`; }
+        saResults.push({q:key, user: user||'(trống)', ok, note}); }
+
+      resultCard.style.display='block'; resultSummary.innerHTML = `<div class="result">Kết quả trắc nghiệm: ${mcCorrect}/8 đúng</div><div style="margin-top:8px;color:var(--muted)">(Gợi ý đáp án cho tự luận hiển thị bên dưới)</div>`;
+      let html = '<h3>Chi tiết</h3><ol>';
+      for(let i=1;i<=8;i++){ const key='q'+i; const user=formData.get(key)||'(chưa chọn)'; const ok = user===MC_ANSWERS[key]; html += `<li>Trắc nghiệm ${i}: Bạn chọn <b>${user}</b> — ${ok?'<span style="color:#57f287">Đúng</span>':'<span style="color:#ff8a8a">Sai</span>'} (Đáp án: <b>${MC_ANSWERS[key]}</b>)</li>` }
+      html += '</ol><h4>Các câu tự luận (gợi ý đáp án / chấm sơ bộ)</h4><ol>';
+      saResults.forEach(r=>{ html += `<li>${r.q}: Bạn: <i>${escapeHtml(r.user)}</i> — ${r.ok?'<span style="color:#57f287">Được</span>':'<span style="color:#ff8a8a">Chưa được</span>'}<br/><small style="color:var(--muted)">${r.note}</small></li>` });
+      html += '</ol>'; answersDiv.innerHTML = html; if(timeout){ resultSummary.innerHTML += '<div style="color:#ffcc66;margin-top:8px">Hết giờ! Hệ thống đã nộp bài tự động.</div>' }
+      resultCard.scrollIntoView({behavior:'smooth'});
+    }
+
+    function escapeHtml(text){ return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+    window.addEventListener('beforeunload', (e)=>{ if(started && !submitBtn.disabled){ e.preventDefault(); e.returnValue = ''; } });
+  </script>
+</body>
+</html>

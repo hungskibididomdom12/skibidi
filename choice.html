@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chọn Tùy Chọn — Creative Quiz</title>
+  <link rel="stylesheet" href="csss.css" />
+  <style>
+    /* Hình nền gradient với hiệu ứng mờ */
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f66, #fdbb2d);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Thêm style cho ô vui vẻ chứa nút trở lại */
+    .fun-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 320px;
+      margin: 20px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      animation: bounce 1.5s infinite;
+      position: relative;
+    }
+
+    /* Hiệu ứng nảy */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Style cho nút trong ô */
+    .fun-box .btn {
+      background: #fff;
+      color: #ff7e5f;
+      font-weight: bold;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      z-index: 1; /* Đảm bảo nút nổi lên */
+    }
+
+    .fun-box .btn:hover {
+      transform: scale(1.1);
+      background: #feb47b;
+      color: #fff;
+    }
+
+    /* Thêm icon vui nhộn */
+    .fun-box::before {
+      content: "🎉";
+      font-size: 30px;
+      margin-right: 10px;
+      position: absolute;
+      left: 20px;
+    }
+
+    /* Điều chỉnh layout cho 2 nút chính */
+    .choice-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .button-container {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 25px;
+      border-radius: 15px;
+      width: 250px;
+      text-align: center;
+      min-height: 180px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .button-container::before {
+      content: "⭐"; /* Icon trang trí */
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      opacity: 0.7;
+    }
+
+    .button-container::after {
+      content: "🌟"; /* Icon trang trí */
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 20px;
+      opacity: 0.7;
+    }
+
+    .button-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .button-desc {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #ddd;
+      line-height: 1.6;
+      padding: 0 10px;
+      word-wrap: break-word;
+    }
+
+    /* Thêm tiêu đề phụ vui vẻ */
+    .sub-lead {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-top: 10px;
+      opacity: 0.9;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Điều chỉnh container */
+    .container {
+      text-align: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- nút đăng nhập -->
+  <button class="login-btn" onclick="window.location.href='login.html'">
+    Đăng nhập
+  </button>
+
+  <div class="container">
+    <h1>Chọn Tùy Chọn</h1>
+    <p class="lead">
+      Bạn đã chọn môn học. Hãy chọn tiếp theo!
+    </p>
+    <p class="sub-lead">Hãy khám phá và học tập thật vui vẻ nhé! 🎈</p>
+
+    <div class="choice-buttons">
+      <div class="button-container">
+        <button id="infoBtn" class="btn">Thông tin</button>
+        <p class="button-desc">Khám phá kiến thức cơ bản và nâng cao về môn học đã chọn...</p>
+      </div>
+      <div class="button-container">
+        <button id="exerciseBtn" class="btn">Bài tập</button>
+        <p class="button-desc">Thực hành với loạt bài tập đa dạng từ cơ bản đến nâng cao...</p>
+      </div>
+    </div>
+
+    <!-- Ô vui vẻ chứa nút trở lại trang chủ -->
+    <div class="fun-box">
+      <button class="btn" onclick="window.location.href='trangchu.html'">Trở lại trang chủ</button>
+    </div>
+  </div>
+
+<script>
+  // Lấy subject từ query param
+  const urlParams = new URLSearchParams(window.location.search);
+  const subjectKey = urlParams.get('subject');
+
+  if (subjectKey) {
+    const infoFileMap = {
+      vatly: "vatly.html", // Thay bằng link thật của bạn
+      hoahoc: "hoahoc.html",
+      sinhhoc: "sinhhoc.html",
+      datkhi: "datkhi.html"
+    };
+    const quizFileMap = {
+      vatly: "quiz_vatly.html", // Thay bằng link web bài tập của bạn
+      hoahoc: "quiz_hoahoc.html",
+      sinhhoc: "quiz_sinhhoc.html",
+      datkhi: "quiz_datkhi.html"
+    };
+
+    let infoFile = infoFileMap[subjectKey] || `${subjectKey}.html`;
+    let quizFile = quizFileMap[subjectKey] || `quiz_${subjectKey}.html`;
+
+    document.getElementById('infoBtn').onclick = () => { window.location.href = infoFile; };
+    document.getElementById('exerciseBtn').onclick = () => { window.location.href = quizFile; };
+  } else {
+    alert('Không tìm thấy môn học. Quay lại trang chủ.');
+    window.location.href = 'trangchu.html';
+  }
+</script>
+
+</body>
+</html>

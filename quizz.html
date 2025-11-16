@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Quiz Game – Khoa học tự nhiên</title>
+<style>
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #4e9af1, #6a4ff7);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#gameBox {
+    width: 9000px;
+    max-width: 95%;
+    padding: 50px 40px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    text-align: center;
+    position: relative;
+}
+#menu { display: flex; flex-direction: column; gap: 25px; }
+.menuBtn {
+    padding: 25px;
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border-radius: 250px;
+    font-size: 28px;
+    cursor: pointer;
+    transition: .25s;
+}
+.menuBtn:hover { transform: scale(1.05); background: rgba(255,255,255,0.3); }
+
+#questionImg {
+    width: 100%;
+    max-height: 25px;
+    object-fit: cover;
+    border-radius: 20px;
+    display: none;
+    margin-bottom: 20px;
+}
+#questionText {
+    font-size: 45px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 30px;
+    min-height: 70px;
+}
+
+/* --- CSS MỚI CHO CÁC NÚT ĐÁP ÁN --- */
+.answers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* rộng hơn */
+    gap: 15px; /* giảm khoảng cách */
+    justify-items: center;
+    margin-top: 20px;
+}
+
+.answerBtn {
+    padding: 150px 25px; /* tăng padding ngang để các nút dài hơn */
+    border-radius: 20px;
+    background: rgba(255,255,255,0.25);
+    color: white;
+    font-size: 22px; /* to chữ hơn */
+    cursor: pointer;
+    transition: transform 0.25s, background 0.25s;
+    width: 100%;
+    max-width: 220px; /* tăng max-width */
+    text-align: center;
+}
+
+
+.answerBtn:hover {
+    transform: scale(1.05);
+    background: rgba(255,255,255,0.35);
+}
+
+.wrong { background: #ff4f6a !important; animation: shake 0.3s; }
+.correct { background: #4eff9d !important; }
+
+@keyframes shake {
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+}
+
+#progressBarContainer {
+    width: 100%;
+    height: 18px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    display: none;
+}
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: #4effb8;
+    transition: width 0.4s ease;
+}
+
+.slideOut { animation: slideOut .4s forwards; }
+.slideIn { animation: slideIn .4s forwards; }
+@keyframes slideOut { to { transform: translateX(-150%); opacity: 0; } }
+@keyframes slideIn { from { transform: translateX(150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+</style>
+</head>
+<body>
+<div id="gameBox">
+    <div id="menu">
+        <div class="menuBtn" onclick="startSubject('ly')">📘 Vật Lý</div>
+        <div class="menuBtn" onclick="startSubject('hoa')">🧪 Hóa Học</div>
+        <div class="menuBtn" onclick="startSubject('sinh')">🌱 Sinh Học</div>
+        <div class="menuBtn" onclick="startSubject('td')">🌍 Địa Lí</div>
+    </div>
+
+    <div id="progressBarContainer"><div id="progressBar"></div></div>
+    <img id="questionImg">
+    <div id="questionText"></div>
+    <div class="answers" id="answerBox"></div>
+    <canvas id="confettiCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById("confettiCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = 900; canvas.height = 600;
+let confetti = [];
+function spawnConfetti() {
+    for(let i=0;i<30;i++){
+        confetti.push({
+            x:Math.random()*canvas.width,
+            y:-10,
+            s:Math.random()*4+2,
+            c:`hsl(${Math.random()*360},100%,60%)`,
+            v:Math.random()*3+2
+        });
+    }
+}
+function updateConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    confetti.forEach((p,i)=>{
+        p.y+=p.v;
+        ctx.fillStyle=p.c;
+        ctx.fillRect(p.x,p.y,p.s,p.s);
+        if(p.y>canvas.height) confetti.splice(i,1);
+    });
+    requestAnimationFrame(updateConfetti);
+}
+updateConfetti();
+
+let quiz = {
+    ly:[
+        {q:"Ánh sáng truyền đi theo đường gì?", img:"", a:["Đường thẳng","Đường cong","Ziczac","Tùy lúc","Khác"], c:0},
+        {q:"Âm thanh lan truyền trong môi trường nào?", img:"", a:["Rắn","Lỏng","Khí","Tất cả đúng","Không biết"], c:3},
+        {q:"Đơn vị đo cường độ dòng điện?", img:"", a:["Vôn","Ampe","Ohm","Wat","Khác"], c:1},
+        {q:"Vật nào bay lên không khí?", img:"", a:["Bóng bay","Xe hơi","Đá","Bàn","Khác"], c:0},
+        {q:"Định luật Ôm liên quan gì?", img:"", a:["Dòng điện","Điện áp","Điện trở","Cả 3","Khác"], c:3},
+        {q:"Đơn vị đo điện trở?", img:"", a:["Ohm","Ampe","Vôn","Wat","Khác"], c:0},
+        {q:"Gia tốc trọng trường kí hiệu?", img:"", a:["g","G","a","t","Khác"], c:0},
+        {q:"Đơn vị lực?", img:"", a:["Newton","Joule","Watt","Ampere","Khác"], c:0},
+        {q:"Tốc độ ánh sáng?", img:"", a:["3x10^8 m/s","3x10^6 m/s","3x10^5 m/s","3x10^7 m/s","Khác"], c:0},
+        {q:"Ánh sáng màu nào có bước sóng dài nhất?", img:"", a:["Đỏ","Xanh lá","Xanh dương","Tím","Khác"], c:0}
+    ],
+    hoa:[
+        {q:"Nguyên tử gồm?", img:"", a:["e,p,n","Chỉ e","Chỉ p","Ion","Khác"], c:0},
+        {q:"Phản ứng oxi hóa khử?", img:"", a:["Trao đổi e","H+","pH","O2","Khác"], c:0},
+        {q:"H2O là gì?", img:"", a:["Nước","Hydrogen","Oxy","Độ ẩm","Khác"], c:0},
+        {q:"Công thức muối ăn?", img:"", a:["NaCl","KCl","CaCl2","MgCl2","Khác"], c:0},
+        {q:"Hóa trị của O?", img:"", a:["2","1","3","4","Khác"], c:0},
+        {q:"Nguyên tố C?", img:"", a:["Carbon","Calcium","Chlorine","Cobalt","Khác"], c:0},
+        {q:"pH axit nhỏ hơn?", img:"", a:["7","8","6","5","Khác"], c:2},
+        {q:"Tốc độ phản ứng tăng khi?", img:"", a:["Nhiệt độ tăng","Ánh sáng","Không khí","Khác","Khác"], c:0},
+        {q:"Kim loại nào mềm?", img:"", a:["Na","Fe","Cu","Ag","Khác"], c:0},
+        {q:"Hợp chất hữu cơ chứa?", img:"", a:["C,H,O","C,O,N","H,O,N","C,H,N","Khác"], c:0}
+    ],
+    sinh:[
+        {q:"Đơn vị cấu tạo cơ thể sống?", img:"", a:["Tế bào","Mô","Cơ quan","Hệ cơ quan","Khác"], c:0},
+        {q:"DNA chứa?", img:"", a:["A,T,G,C","A,G,C","A,T,C","A,G,T","Khác"], c:0},
+        {q:"Hô hấp ở người xảy ra ở?", img:"", a:["Phổi","Tim","Gan","Thận","Khác"], c:0},
+        {q:"Chức năng xương?", img:"", a:["Nâng đỡ","Chuyển hóa","Bảo vệ","Cả 3","Khác"], c:3},
+        {q:"Động vật nào có vú?", img:"", a:["Chó","Gà","Cá","Thằn lằn","Khác"], c:0},
+        {q:"Thực vật quang hợp?", img:"", a:["Cây xanh","Cây khô","Cỏ","Khác","Khác"], c:0},
+        {q:"Hệ tuần hoàn gồm?", img:"", a:["Tim, mạch máu","Tim","Mạch máu","Phổi","Khác"], c:0},
+        {q:"Chức năng hô hấp?", img:"", a:["Trao đổi khí","Tiêu hóa","Vận động","Bài tiết","Khác"], c:0},
+        {q:"Động vật đơn bào?", img:"", a:["Amip","Chó","Cá","Thực vật","Khác"], c:0},
+        {q:"Hệ thần kinh gồm?", img:"", a:["Não, tủy sống, dây thần kinh","Tim","Gan","Thận","Khác"], c:0}
+    ],
+    td:[
+        {q:"Lục địa lớn nhất?", img:"", a:["Á‑Âu","Phi","Mỹ","Úc","Khác"], c:0},
+        {q:"Đại dương lớn nhất?", img:"", a:["Thái Bình Dương","Ấn Độ Dương","Đại Tây Dương","Bắc Băng Dương","Khác"], c:0},
+        {q:"Núi cao nhất?", img:"", a:["Everest","K2","Kangchenjunga","Lhotse","Khác"], c:0},
+        {q:"Sông dài nhất?", img:"", a:["Nil","Amazon","Hằng","Mekong","Khác"], c:0},
+        {q:"Quốc gia đông dân nhất?", img:"", a:["Trung Quốc","Ấn Độ","Mỹ","Indonesia","Khác"], c:0},
+        {q:"Kinh độ đi qua Hà Nội?", img:"", a:["105°Đ","106°Đ","104°Đ","103°Đ","Khác"], c:0},
+        {q:"Vĩ độ đi qua Hà Nội?", img:"", a:["21°B","22°B","20°B","23°B","Khác"], c:0},
+        {q:"Thủ đô Việt Nam?", img:"", a:["Hà Nội","Hồ Chí Minh","Đà Nẵng","Huế","Khác"], c:0},
+        {q:"Biển lớn nhất Việt Nam?", img:"", a:["Biển Đông","Biển Tây","Biển Bắc","Biển Nam","Khác"], c:0},
+        {q:"Đảo lớn nhất Việt Nam?", img:"", a:["Phú Quốc","Côn Đảo","Lý Sơn","Bạch Long Vĩ","Khác"], c:0}
+    ]
+};
+
+let questions=[], index=0, score=0;
+
+function startSubject(subject){
+    questions = quiz[subject].sort(()=>Math.random()-0.5);
+    index=0; score=0;
+    document.getElementById("menu").style.display="none";
+    document.getElementById("progressBarContainer").style.display="block";
+    loadQuestion();
+}
+
+function loadQuestion(){
+    let q = questions[index];
+    let qBox = document.getElementById("questionText");
+    let aBox = document.getElementById("answerBox");
+    qBox.classList.add("slideIn");
+    aBox.classList.add("slideIn");
+    qBox.textContent = q.q;
+    if(q.img){document.getElementById("questionImg").src=q.img; document.getElementById("questionImg").style.display="block";}
+    else document.getElementById("questionImg").style.display="none";
+
+    aBox.innerHTML="";
+    q.a.forEach((ans,i)=>{
+        aBox.innerHTML += `<div class="answerBtn" onclick="choose(${i})">${ans}</div>`;
+    });
+
+    setTimeout(()=>{ qBox.classList.remove("slideIn"); aBox.classList.remove("slideIn"); },400);
+}
+
+function choose(i){
+    let q = questions[index];
+    let btns = document.querySelectorAll(".answerBtn");
+    btns.forEach(b=>b.style.pointerEvents="none");
+
+    if(i===q.c){ btns[i].classList.add("correct"); spawnConfetti(); score++; updateProgress(); }
+    else { btns[i].classList.add("wrong"); btns[q.c].classList.add("correct"); }
+
+    setTimeout(slideNext,700);
+}
+
+function slideNext(){
+    let qBox = document.getElementById("questionText");
+    let aBox = document.getElementById("answerBox");
+    qBox.classList.add("slideOut"); aBox.classList.add("slideOut");
+    setTimeout(()=>{
+        qBox.classList.remove("slideOut"); aBox.classList.remove("slideOut");
+        index++; 
+        if(index<questions.length) loadQuestion(); 
+        else endGame();
+    },400);
+}
+
+function updateProgress(){
+    document.getElementById("progressBar").style.width = (score/questions.length*100) + "%";
+}
+
+function endGame(){
+    document.getElementById("questionImg").style.display="none";
+    document.getElementById("questionText").textContent = `Hoàn thành! Bạn đúng ${score}/${questions.length}`;
+    document.getElementById("answerBox").innerHTML = `<div style='color:white;font-size:26px;margin-top:20px'>🎉 Nhấn F5 để chơi lại!</div>`;
+}
+</script>
+</body>
+</html>

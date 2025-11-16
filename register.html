@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng ký - Skibidi Quiz 9A</title>
+  <style>
+    body { display:flex; justify-content:center; align-items:center; height:100vh; background:linear-gradient(135deg, #1e293b, #0f172a); font-family:sans-serif; margin:0; }
+    .register-box { background:white; padding:50px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.25); width:500px; text-align:center; }
+    .register-box h2 { font-size:36px; font-weight:800; margin-bottom:30px; color:#111827; }
+    .register-box input { width:100%; padding:16px 14px; margin:12px 0; border-radius:10px; border:1px solid #bbb; font-size:18px; }
+    .register-box button { width:100%; padding:14px; border:none; border-radius:10px; background:linear-gradient(90deg,#10b981,#3b82f6); color:white; font-size:18px; font-weight:bold; cursor:pointer; transition:0.3s; }
+    .register-box button:hover { opacity:0.9; transform:scale(1.02); }
+    .back-link, .login-link { display:block; margin-top:12px; font-size:16px; text-decoration:none; }
+    .back-link { color:#2563eb; }
+    .login-link { color:#9333ea; font-weight:600; }
+    .back-link:hover, .login-link:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <h2>Đăng ký</h2>
+    <form id="registerForm">
+      <input type="text" id="username" placeholder="Tên đăng nhập" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Mật khẩu" required />
+      <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu" required />
+      <button type="submit">Tạo tài khoản</button>
+    </form>
+    <a href="trangchu.html" class="back-link">← Quay lại trang chủ</a>
+    <a href="login.html" class="login-link">Đã có tài khoản? Đăng nhập</a>
+  </div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+      if(password !== confirmPassword) {
+        alert("Mật khẩu không khớp!");
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem('users')) || {};
+
+      if(users[username]) {
+        alert("Tên đăng nhập đã tồn tại!");
+        return;
+      }
+
+      // Lưu user mới
+      users[username] = { email, password };
+      localStorage.setItem('users', JSON.stringify(users));
+
+      alert("Đăng ký thành công! Hãy đăng nhập.");
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>
