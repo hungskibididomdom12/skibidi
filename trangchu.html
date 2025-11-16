@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Creative Quiz — Trang chủ</title>
+  <link rel="stylesheet" href="csss.css" />
+</head>
+<body>
+  <!-- nút đăng nhập -->
+  <button class="login-btn" onclick="window.location.href='login.html'">
+    Đăng nhập
+  </button>
+  <div class="sidebar">
+  <div class="profile card">
+    <img src="https://i.pinimg.com/736x/6d/b7/0e/6db70ea8cc222598a89d17de720e7433.jpg" alt="Avatar" class="avatar">
+    <h3>Tên người chơi</h3>
+    <p class="level">Cấp độ: <span>12</span></p>
+  </div>
+
+  <div class="card">
+    <h4>🏆 Thành tựu</h4>
+    <div class="achievement">100 câu đúng 🎯</div>
+    <div class="achievement">Hoàn thành 5 quiz liên tiếp 🔥</div>
+    <div class="achievement">Thành viên 1 tháng 🎉</div>
+  </div>
+
+  <div class="card">
+    <h4>📊 Thống kê</h4>
+    <div class="stat"><b>Tổng điểm:</b> 2560</div>
+    <div class="stat"><b>Thời gian chơi:</b> 12h</div>
+  </div>
+</div>
+
+
+  <div class="container">
+    <h1>Creative Quiz</h1>
+    <p class="lead">
+      Ôn tập Khoa học Tự nhiên — chọn chủ đề bạn muốn học ngay
+    </p>
+
+    <div class="search-row">
+      <!-- search box -->
+      <div class="search-box" id="searchBox" role="search" aria-label="Tìm quiz">
+        <div class="search-icon">🔎</div>
+        <input 
+          id="searchInput" 
+          class="search-input" 
+          type="text" 
+          placeholder="Bấm vào đây để chọn chủ đề (Vật Lý, Hóa Học,...)" 
+          autocomplete="off" 
+        />
+        <button id="goBtn" class="btn" title="Bắt đầu">
+          Bắt đầu
+        </button>
+      </div>
+
+      <!-- placeholder -->
+      <div id="placeholder" class="placeholder">
+        <div class="hero">
+          <p>Ôn tập Khoa học Tự nhiên dễ dàng và thú vị.<br>
+          Chọn môn học bạn muốn học bằng cách tìm kiếm hoặc chọn bên dưới 👇</p>
+          <div class="hero-icons">
+            <span>🔭</span>
+            <span>⚗️</span>
+            <span>🧬</span>
+            <span>🌍</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- bảng mặc định -->
+      <div id="defaultBoards" class="default-boards">
+        <div class="board">
+          <h3>📖 Hướng dẫn sử dụng</h3>
+          <p>Bấm vào ô tìm kiếm để chọn môn học (Vật lý, Hóa học, Sinh học...).</p>
+        </div>
+        <div class="board">
+          <h3>🤔 Không biết chọn gì?</h3>
+          <p>Cứ chọn ngẫu nhiên một môn để bắt đầu trải nghiệm thử nếu không hãy thử chơi những trò chơi vui vẻ</p>
+        </div>
+        <div class="board">
+          <h3>🎮 Chọn chơi thử</h3>
+          <p>Bấm "Bắt đầu" mà không gõ gì, hệ thống sẽ gợi ý một chủ đề ngẫu nhiên.</p>
+        </div>
+      </div>
+
+      <!-- results -->
+      <div id="results" class="results" aria-hidden="true">
+        <div class="card" data-key="vatly" tabindex="0">
+          <div class="title">🔭 Vật Lý</div>
+          <div class="desc">Cơ học, điện — cơ bản đến nâng cao cho lớp 9</div>
+          <div class="meta">Số quiz: 12 • Thời gian trung bình: 8 phút</div>
+        </div>
+        <div class="card" data-key="hoahoc" tabindex="0">
+          <div class="title">⚗️ Hóa Học</div>
+          <div class="desc">Nguyên tử — phản ứng, phương trình & bài tập thực hành</div>
+          <div class="meta">Số quiz: 10 • Thời gian trung bình: 10 phút</div>
+        </div>
+        <div class="card" data-key="sinhhoc" tabindex="0">
+          <div class="title">🧬 Sinh Học</div>
+          <div class="desc">Sinh vật & cơ chế — dễ hiểu, có hình minh họa</div>
+          <div class="meta">Số quiz: 8 • Thời gian trung bình: 6 phút</div>
+        </div>
+        <div class="card" data-key="datkhi" tabindex="0">
+          <div class="title">🌍 Khoa học Trái Đất</div>
+          <div class="desc">Địa chất, khí tượng, môi trường — gần gũi thực tế</div>
+          <div class="meta">Số quiz: 6 • Thời gian trung bình: 5 phút</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const searchInput   = document.getElementById('searchInput');
+const searchBox     = document.getElementById('searchBox');
+const results       = document.getElementById('results');
+const cards         = results.querySelectorAll('.card');
+const goBtn         = document.getElementById('goBtn');
+const defaultBoards = document.getElementById('defaultBoards');
+
+let isStarted = false;
+
+// chuẩn hoá chữ
+function norm(s) {
+  if (!s) return '';
+  return s.toString().toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s]/g, '')
+    .trim();
+}
+
+// hiển thị 4 môn
+function showResults() {
+  defaultBoards.style.display = 'none'; 
+  results.style.display = '';
+  results.classList.add('show');
+  results.setAttribute('aria-hidden', 'false');
+}
+
+// hiển thị 3 ô mặc định
+function showDefault() {
+  results.classList.remove('show');
+  results.setAttribute('aria-hidden', 'true');
+  defaultBoards.style.display = 'flex'; 
+  results.style.display = '';
+}
+
+// lọc card theo input
+function filterCards(keyword) {
+  const k = norm(keyword).replace(/\s+/g, '');
+  if (!k) {
+    cards.forEach(card => card.style.display = 'block');
+    return;
+  }
+  cards.forEach(card => {
+    const keyNorm   = norm(card.getAttribute('data-key')).replace(/\s+/g, '');
+    const titleNorm = norm(card.querySelector('.title').textContent).replace(/\s+/g, '');
+    card.style.display = (keyNorm === k || titleNorm === k) ? 'block' : 'none';
+  });
+}
+
+// gõ chữ
+searchInput.addEventListener('input', () => {
+  delete searchInput.dataset.key;
+  cards.forEach(c => c.style.display = 'block');
+  filterCards(searchInput.value);
+
+  if (searchInput.value.trim() === "") {
+    isStarted = false;
+    showResults(); 
+  } else {
+    showResults(); 
+  }
+});
+
+// click vào ô tìm kiếm
+searchBox.addEventListener('click', () => {
+  searchInput.focus();
+  if (searchInput.value.trim() === "") {
+    showResults();
+  } else {
+    showResults();
+  }
+});
+
+// click ra ngoài
+document.addEventListener('click', (e) => {
+  if (!isStarted &&
+      !searchBox.contains(e.target) &&
+      !results.contains(e.target)) {
+    showDefault(); 
+  }
+});
+
+// chọn card
+cards.forEach(card => {
+  card.addEventListener('click', () => {
+    const title = card.querySelector('.title').textContent || '';
+    const key   = card.getAttribute('data-key') || '';
+    searchInput.value = title;
+    searchInput.dataset.key = key;
+    showDefault();
+  });
+});
+
+// bấm Bắt đầu
+goBtn.addEventListener('click', () => {
+  let subjectKey = searchInput.dataset.key || null;
+  if (!subjectKey) {
+    const inorm = norm(searchInput.value).replace(/\s+/g, '');
+    cards.forEach(card => {
+      const keyNorm   = norm(card.getAttribute('data-key')).replace(/\s+/g, '');
+      const titleNorm = norm(card.querySelector('.title').textContent).replace(/\s+/g, '');
+      if (keyNorm === inorm || titleNorm === inorm) {
+        subjectKey = card.getAttribute('data-key');
+      }
+    });
+  }
+
+  if (subjectKey) {
+    // Chuyển hướng đến trang choice.html với query param subject
+    window.location.href = 'choice.html?subject=' + subjectKey;
+  } else {
+    showResults();
+    alert('Không tìm thấy chủ đề phù hợp. Hãy chọn trong danh sách bên dưới.');
+  }
+});
+</script>
+<script>
+// nút đăng nhập/đăng xuất
+const loginBtn = document.querySelector('.login-btn');
+
+// tạo nút đăng xuất
+const logoutBtn = document.createElement('button');
+logoutBtn.textContent = 'Đăng xuất';
+logoutBtn.className = 'login-btn';
+logoutBtn.style.background = 'linear-gradient(90deg,#ec4899,#9333ea)';
+logoutBtn.style.display = 'none';
+logoutBtn.style.position = 'fixed';
+logoutBtn.style.top = '20px';
+logoutBtn.style.right = '20px';
+logoutBtn.style.zIndex = '10';
+document.body.appendChild(logoutBtn);
+
+// phần tên người chơi
+const playerNameElem = document.querySelector('.profile h3');
+
+// kiểm tra xem đã đăng nhập chưa
+const currentUser = localStorage.getItem('currentUser');
+if(currentUser){
+  playerNameElem.textContent = currentUser;
+  loginBtn.style.display = 'none';
+  logoutBtn.style.display = 'block';
+}
+
+// click đăng nhập
+loginBtn.addEventListener('click', ()=>{
+  window.location.href = 'login.html';
+});
+
+// click đăng xuất
+logoutBtn.addEventListener('click', ()=>{
+  localStorage.removeItem('currentUser');
+  alert('Bạn đã đăng xuất!');
+  location.reload();
+});
+</script>
+
+
+</body>
+</html>
